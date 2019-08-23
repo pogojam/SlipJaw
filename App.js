@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Text, Button, View, TouchableOpacity } from "react-native";
+import { Text, Image, Button, View, TouchableOpacity } from "react-native";
 import * as Permissions from "expo-permissions";
 import { Camera } from "expo-camera";
 import { fetchGoogleCloud } from "./services/index";
 
 const CameraIOS = () => {
   const [permission, setPermission] = useState(null);
+  const [imgURI, setURI] = useState(null);
   const cameraRef = useRef(null);
 
   const handlePress = async data => {
@@ -15,7 +16,7 @@ const CameraIOS = () => {
     const { uri } = photo;
 
     fetchGoogleCloud(uri);
-    console.log(photo);
+    setURI(uri);
   };
 
   const getStatus = async () => {
@@ -39,6 +40,9 @@ const CameraIOS = () => {
             title="Snap"
           />
         </Camera>
+      )}
+      {imgURI && (
+        <Image style={{ height: 50, width: 50 }} source={{ uri: imgURI }} />
       )}
     </View>
   );
