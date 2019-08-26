@@ -5,7 +5,7 @@ import * as FileSystem from "expo-file-system";
 const baseURL =
   "https://vision.googleapis.com/v1/images:annotate?key=" + GCP_KEY;
 
-const makeReqBody = img => {
+const reqBody = img => {
   return {
     requests: [
       {
@@ -14,22 +14,29 @@ const makeReqBody = img => {
         },
         features: [
           {
-            type: "TEXT_DETECTION",
-            maxResults: 1
+            type: "DOCUMENT_TEXT_DETECTION"
           }
         ]
       }
     ]
   };
 };
-const Fetch = async body => await axios.post(baseURL, body);
+// const Fetch = async body =>
 
 export const fetchGoogleCloud = async uri => {
   const file = await FileSystem.readAsStringAsync(uri, {
     encoding: FileSystem.EncodingType.Base64
   });
 
-  const Text = await Fetch(makeReqBody(file));
+  const visionData = await axios.post(baseURL, reqBody(file));
+  const { data } = visionData;
 
-  console.log(baseURL, Text);
+  if (!data.responses) return "No Responses found";
+
+  return data.responses[0].textAnnotations[0];
+  // return data.responses[0].textAnnotations[0];
+
+  // data.responses[0].blocks.map(e=>console.log(e);)
 };
+
+// const Text = await Fetch(makeReqBody(file));

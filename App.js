@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Text, Image, Button, View, TouchableOpacity } from "react-native";
+import { Text, Image, View, TouchableOpacity } from "react-native";
+import { Button } from "react-native-elements";
 import * as Permissions from "expo-permissions";
 import { Camera } from "expo-camera";
 import { fetchGoogleCloud } from "./services/index";
@@ -11,12 +12,13 @@ const CameraIOS = () => {
 
   const handlePress = async data => {
     const { current: camera } = cameraRef;
-
     const photo = await camera.takePictureAsync();
     const { uri } = photo;
-
-    fetchGoogleCloud(uri);
     setURI(uri);
+
+    const ticket = await fetchGoogleCloud(uri);
+    // ticket.responses[0].textAnnotations[0]
+    console.log(ticket.responses[0].textAnnotations[0]);
   };
 
   const getStatus = async () => {
@@ -33,12 +35,15 @@ const CameraIOS = () => {
     <View style={{ backgroundColor: "red", flex: 1 }}>
       {permission && (
         <Camera ref={cameraRef} style={{ flex: 1 }}>
-          <Button
-            onPress={handlePress}
-            color="coral"
-            style={{ backgroundColor: "white", alignContent: "flex-end" }}
-            title="Snap"
-          />
+          <View style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+            <Button
+              onPress={handlePress}
+              color="coral"
+              backgroundColor="black"
+              style={{ backgroundColor: "#1E6738", alignSelf: "flex-end" }}
+              title="Snap"
+            />
+          </View>
         </Camera>
       )}
       {imgURI && (
